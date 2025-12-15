@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PZEM-017 Anime Dashboard</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Kosugi+Maru&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #FF6B9D;   /* Anime Pink */
+            --secondary: #4ECDC4; /* Teal/Cyan */
+            --accent: #FFE66D;    /* Soft Yellow */
+            --dark-text: #2C3E50;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --card-border: 2px solid white;
+        }
+
+        body {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            background-attachment: fixed;
+            font-family: 'Kosugi Maru', sans-serif; /* Font bulat seperti subtitle anime */
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: var(--dark-text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Latar Belakang Pola Garis/Grid halus */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        /* Header Area */
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            background: white;
+            padding: 10px 40px;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(255, 107, 157, 0.3);
+            border: 4px solid var(--primary);
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary);
+            margin: 0;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            -webkit-text-stroke: 1px white;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* Status Badge */
+        #status {
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .status-connected { color: #2ecc71; border: 2px solid #2ecc71; }
+        .status-disconnected { color: #e74c3c; border: 2px solid #e74c3c; }
+
+        /* Layout Utama: Grid Dashboard */
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Area Karakter (Opsional: Bisa diisi gambar waifu/anime) */
+        .character-area {
+            display: none; /* Ubah ke 'block' jika ingin menampilkan gambar di layar besar */
+            width: 200px;
+            align-self: center;
+        }
+        
+        @media(min-width: 1000px) {
+            .character-area { display: block; }
+        }
+
+        .dashboard {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        /* Card Style - Anime Pop Style */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 3px solid white;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Animasi Card berbeda durasi agar tidak bareng */
+        .card:nth-child(1) { animation-delay: 0s; border-bottom: 5px solid #FF6B9D; }
+        .card:nth-child(2) { animation-delay: 1s; border-bottom: 5px solid #4ECDC4; }
+        .card:nth-child(3) { animation-delay: 2s; border-bottom: 5px solid #FF9F43; }
+        .card:nth-child(4) { animation-delay: 3s; border-bottom: 5px solid #A29BFE; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        /* Label Card */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .card-label {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--dark-text);
+            text-transform: uppercase;
+        }
+
+        .jp-label {
+            font-size: 0.8rem;
+            color: #999;
+            font-weight: normal;
+        }
+
+        /* Icon Circle */
+        .icon-circle {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-family: 'Fredoka One';
+        }
+
+        /* Value Display */
+        .value-container {
+            text-align: right;
+        }
+
+        .value {
+            font-family: 'Orbitron', monospace;
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            /* Gradient Text */
+            background: -webkit-linear-gradient(45deg, var(--dark-text), #555);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .unit {
+            font-size: 1.2rem;
+            color: #888;
+            font-family: 'Fredoka One', cursive;
+            margin-left: 5px;
+            -webkit-text-fill-color: #888; /* Reset gradient */
+        }
+
+        /* Warna Khusus per elemen */
+        .bg-volt { background: #FF6B9D; color: #FF6B9D; }
+        .bg-amp { background: #4ECDC4; color: #4ECDC4; }
+        .bg-watt { background: #FF9F43; color: #FF9F43; }
+        .bg-kwh { background: #A29BFE; color: #A29BFE; }
+
+        /* Text colors for values matching icons */
+        .txt-volt { background: -webkit-linear-gradient(45deg, #FF6B9D, #ff8fa3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .txt-amp { background: -webkit-linear-gradient(45deg, #4ECDC4, #26de81); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .txt-watt { background: -webkit-linear-gradient(45deg, #FF9F43, #feca57); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .txt-kwh { background: -webkit-linear-gradient(45deg, #A29BFE, #6c5ce7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        footer {
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: white;
+            background: rgba(0,0,0,0.2);
+            padding: 5px 20px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Power System</h1>
+        <div class="subtitle">PZEM-017 • モニ터リングシステム</div>
+    </header>
+
+    <div id="status" class="status-disconnected">System Status: CONNECTING...</div>
+
+    <div class="main-container">
+        <div class="character-area">
+            <img src="https://upload.wikimedia.org/wikipedia/en/9/90/Hatsune_Miku_V4X.png" alt="Mascot" style="width: 100%; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); opacity: 0.9;">
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-label">Voltage</div>
+                        <div class="jp-label">電圧 (Volt)</div>
+                    </div>
+                    <div class="icon-circle bg-volt">V</div>
+                </div>
+                <div class="value-container">
+                    <span id="val-volt" class="value txt-volt">000</span>
+                    <span class="unit">V</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-label">Current</div>
+                        <div class="jp-label">電流 (Ampere)</div>
+                    </div>
+                    <div class="icon-circle bg-amp">A</div>
+                </div>
+                <div class="value-container">
+                    <span id="val-amp" class="value txt-amp">0.00</span>
+                    <span class="unit">A</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-label">Power</div>
+                        <div class="jp-label">電力 (Watt)</div>
+                    </div>
+                    <div class="icon-circle bg-watt">W</div>
+                </div>
+                <div class="value-container">
+                    <span id="val-watt" class="value txt-watt">0000</span>
+                    <span class="unit">W</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-label">Energy</div>
+                        <div class="jp-label">エネルギー (kWh)</div>
+                    </div>
+                    <div class="icon-circle bg-kwh">E</div>
+                </div>
+                <div class="value-container">
+                    <span id="val-kwh" class="value txt-kwh">000.0</span>
+                    <span class="unit">kWh</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        IOT DASHBOARD PROJECT • PZEM-017
+    </footer>
+
+    <script>
+        // --- LOGIC JAVASCRIPT (TIDAK BERUBAH DARI ASLINYA) ---
+        // Hanya logika visual sedikit ditambah untuk efek
+        
+        const mqtt_broker = "broker.emqx.io";
+        const mqtt_port = 8084; 
+        const mqtt_topic = "kampus/pzem017/data";
+        const client_id = "anime_dash_" + Math.random().toString(16).substr(2, 8);
+
+        const client = new Paho.MQTT.Client(mqtt_broker, mqtt_port, client_id);
+
+        client.onConnectionLost = function (responseObject) {
+            console.log("Connection Lost: " + responseObject.errorMessage);
+            const statusEl = document.getElementById("status");
+            statusEl.innerHTML = "⚠ DISCONNECTED / 接続切れ";
+            statusEl.className = "status-disconnected";
+        };
+
+        client.onMessageArrived = function (message) {
+            console.log("Data: " + message.payloadString);
+            
+            try {
+                const data = JSON.parse(message.payloadString);
+
+                // Update Data
+                updateValue("val-volt", parseFloat(data.tegangan).toFixed(0));
+                updateValue("val-amp", parseFloat(data.arus).toFixed(2));
+                updateValue("val-watt", parseFloat(data.daya).toFixed(1));
+                updateValue("val-kwh", parseFloat(data.energi).toFixed(3));
+
+            } catch (e) {
+                console.error("Error parsing JSON: ", e);
+            }
+        };
+
+        // Fungsi helper untuk animasi update angka
+        function updateValue(id, newValue) {
+            const el = document.getElementById(id);
+            if (el.innerText !== newValue) {
+                el.innerText = newValue;
+                // Efek "Pop" kecil saat angka berubah
+                el.style.transform = "scale(1.2)";
+                setTimeout(() => el.style.transform = "scale(1)", 200);
+            }
+        }
+
+        const options = {
+            useSSL: true,
+            onSuccess: function () {
+                console.log("MQTT Connected!");
+                const statusEl = document.getElementById("status");
+                statusEl.innerHTML = "★ ONLINE / システム稼働中 ★";
+                statusEl.className = "status-connected";
+                
+                client.subscribe(mqtt_topic);
+            },
+            onFailure: function (message) {
+                console.log("Connection Failed: " + message.errorMessage);
+                const statusEl = document.getElementById("status");
+                statusEl.innerHTML = "⚠ CONNECTION FAILED";
+                statusEl.className = "status-disconnected";
+            }
+        };
+
+        console.log("Connecting...");
+        client.connect(options);
+
+    </script>
+</body>
+</html>
