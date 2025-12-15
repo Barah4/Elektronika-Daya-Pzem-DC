@@ -22,7 +22,6 @@
         }
 
         body {
-            /* Background Gelap Abstrak */
             background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
@@ -38,21 +37,19 @@
             align-items: center;
         }
 
-        /* Overlay Hitam Transparan */
         body::before {
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(5, 10, 20, 0.85); /* Membuat background image lebih gelap */
+            background: rgba(5, 10, 20, 0.85);
             z-index: -1;
         }
 
-        /* Header Area */
         header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             background: rgba(0, 0, 0, 0.5);
-            padding: 15px 50px;
+            padding: 10px 40px;
             border-radius: 4px;
             border-bottom: 3px solid var(--neon-blue);
             backdrop-filter: blur(10px);
@@ -64,7 +61,7 @@
         h1 {
             color: var(--neon-blue);
             margin: 0;
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: 700;
@@ -72,19 +69,19 @@
         }
 
         .subtitle {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             margin-top: 5px;
             font-weight: 600;
             letter-spacing: 1px;
         }
 
-        /* Status Badge */
         #status {
             font-weight: bold;
-            padding: 8px 25px;
+            padding: 5px 20px;
+            font-size: 0.9rem;
             border-radius: 4px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             background: rgba(0,0,0,0.6);
             border: 1px solid #333;
             font-family: 'Orbitron', monospace;
@@ -94,29 +91,26 @@
         .status-connected { color: #00ff88; border-color: #00ff88 !important; box-shadow: 0 0 10px rgba(0,255,136,0.2); }
         .status-disconnected { color: #ff3366; border-color: #ff3366 !important; box-shadow: 0 0 10px rgba(255,51,102,0.2); }
 
-        /* Layout Utama */
         .main-container {
             display: flex;
-            flex-direction: column; /* Mengubah arah flex ke kolom agar grafik di bawah */
+            flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 15px; /* Mengurangi jarak antar elemen */
             width: 100%;
-            max-width: 1100px;
+            max-width: 900px; /* Membatasi lebar agar rapi */
         }
 
-        /* Grid Kartu Atas */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Mengecilkan min-width kartu */
+            gap: 15px;
             width: 100%;
         }
 
-        /* Card Style - Dark & Techy */
         .card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px; /* Padding kartu diperkecil */
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             backdrop-filter: blur(8px);
             border: var(--glass-border);
@@ -138,26 +132,24 @@
             border-color: var(--neon-blue);
         }
 
-        /* Label Card */
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .card-label {
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: var(--text-muted);
             text-transform: uppercase;
         }
 
-        /* ICON CIRCLE */
         .icon-circle {
-            width: 40px; height: 40px;
+            width: 35px; height: 35px; /* Icon diperkecil sedikit */
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -165,25 +157,23 @@
             font-weight: bold;
             color: #000;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1rem;
             background: var(--neon-blue);
             box-shadow: 0 0 15px var(--neon-blue);
         }
         
-        /* Variasi Warna Icon */
         .icon-v { background: #ff0055; box-shadow: 0 0 10px #ff0055; color: white; }
         .icon-a { background: #00f2ff; box-shadow: 0 0 10px #00f2ff; color: black; }
         .icon-w { background: #ffae00; box-shadow: 0 0 10px #ffae00; color: black; }
         .icon-e { background: #bc13fe; box-shadow: 0 0 10px #bc13fe; color: white; }
 
-        /* Value Display */
         .value-container {
             text-align: right;
         }
 
         .value {
             font-family: 'Orbitron', monospace;
-            font-size: 2.8rem;
+            font-size: 2.2rem; /* Font size angka diperkecil */
             font-weight: 700;
             line-height: 1;
             color: white;
@@ -191,40 +181,47 @@
         }
 
         .unit {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             font-weight: bold;
             margin-left: 5px;
         }
 
-        /* Area Grafik */
+        /* --- PERBAIKAN GRAFIK DISINI --- */
         .chart-container {
             width: 100%;
             background: var(--card-bg);
             border: var(--glass-border);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             box-sizing: border-box;
             backdrop-filter: blur(8px);
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .chart-title {
             color: var(--text-muted);
-            font-size: 1.2rem;
-            margin-bottom: 15px;
+            font-size: 1rem;
+            margin-bottom: 10px;
             text-transform: uppercase;
             font-weight: 700;
             border-left: 4px solid var(--neon-blue);
             padding-left: 10px;
         }
 
+        /* Wrapper khusus untuk membatasi tinggi Canvas */
+        .chart-wrapper {
+            position: relative;
+            height: 250px; /* Tinggi KUNCI: Ubah angka ini jika masih kurang kecil */
+            width: 100%;
+        }
+
         footer {
-            margin-top: 40px;
-            font-size: 0.8rem;
+            margin-top: 30px;
+            font-size: 0.7rem;
             color: var(--text-muted);
             border-top: 1px solid #333;
-            padding-top: 20px;
+            padding-top: 10px;
         }
     </style>
 </head>
@@ -287,7 +284,10 @@
 
         <div class="chart-container">
             <div class="chart-title">Grafik Arus Realtime (Ampere) </div>
-            <canvas id="arusChart" height="100"></canvas>
+            
+            <div class="chart-wrapper">
+                <canvas id="arusChart"></canvas>
+            </div>
         </div>
 
     </div>
@@ -297,53 +297,50 @@
     </footer>
 
     <script>
-        // --- KONFIGURASI CHART.JS ---
         const ctx = document.getElementById('arusChart').getContext('2d');
         
-        // Setup Awal Chart
         const arusChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: [], // Label Waktu
+                labels: [],
                 datasets: [{
                     label: 'Arus (A)',
-                    data: [], // Data Nilai
-                    borderColor: '#00f2ff', // Warna Garis Biru Neon
-                    backgroundColor: 'rgba(0, 242, 255, 0.1)', // Warna Fill Transparan
+                    data: [],
+                    borderColor: '#00f2ff',
+                    backgroundColor: 'rgba(0, 242, 255, 0.1)',
                     borderWidth: 2,
                     pointBackgroundColor: '#fff',
-                    pointRadius: 3,
-                    tension: 0.4, // Membuat garis sedikit melengkung halus
+                    pointRadius: 2, /* Titik diperkecil */
+                    tension: 0.4,
                     fill: true
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: false, /* Ini wajib false agar mengikuti tinggi container */
                 plugins: {
                     legend: {
-                        labels: { color: '#94a3b8' } // Warna Legend
+                        labels: { 
+                            color: '#94a3b8',
+                            font: { size: 10 } /* Ukuran font legend diperkecil */
+                        } 
                     }
                 },
                 scales: {
                     x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                        ticks: { color: '#94a3b8' }
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8', font: { size: 10 } }
                     },
                     y: {
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                        ticks: { color: '#94a3b8' },
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8', font: { size: 10 } },
                         beginAtZero: true
                     }
                 },
-                animation: {
-                    duration: 0 // Matikan animasi berat agar performa cepat
-                }
+                animation: { duration: 0 }
             }
         });
 
-        // --- LOGIKA MQTT ---
-        
         const mqtt_broker = "broker.emqx.io";
         const mqtt_port = 8084; 
         const mqtt_topic = "kampus/pzem017/data";
@@ -359,24 +356,19 @@
         };
 
         client.onMessageArrived = function (message) {
-            console.log("Data Masuk: " + message.payloadString);
-            
             try {
                 const data = JSON.parse(message.payloadString);
                 
-                // Ambil nilai
                 const volt = parseFloat(data.tegangan).toFixed(0);
                 const amp = parseFloat(data.arus).toFixed(2);
                 const watt = parseFloat(data.daya).toFixed(1);
                 const kwh = parseFloat(data.energi).toFixed(3);
 
-                // 1. Update Kartu Angka
                 updateValue("val-volt", volt);
                 updateValue("val-amp", amp);
                 updateValue("val-watt", watt);
                 updateValue("val-kwh", kwh);
 
-                // 2. Update Grafik Arus
                 addDataToChart(arusChart, amp);
 
             } catch (e) {
@@ -388,26 +380,22 @@
             const el = document.getElementById(id);
             if (el.innerText !== newValue) {
                 el.innerText = newValue;
-                el.style.color = "#fff"; // Reset putih
+                el.style.color = "#fff";
                 setTimeout(() => el.style.color = "#e0e6ed", 200);
             }
         }
 
-        // Fungsi Menambah Data ke Chart
         function addDataToChart(chart, dataVal) {
             const now = new Date();
             const timeLabel = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
 
-            // Tambah data baru
             chart.data.labels.push(timeLabel);
             chart.data.datasets[0].data.push(dataVal);
 
-            // Batasi jumlah data agar tidak berat (Maksimal 20 titik)
             if (chart.data.labels.length > 20) {
-                chart.data.labels.shift(); // Hapus yang terlama
+                chart.data.labels.shift();
                 chart.data.datasets[0].data.shift();
             }
-
             chart.update();
         }
 
@@ -418,7 +406,6 @@
                 const statusEl = document.getElementById("status");
                 statusEl.innerHTML = "● SISTEM ONLINE";
                 statusEl.className = "status-connected";
-                
                 client.subscribe(mqtt_topic);
             },
             onFailure: function (message) {
